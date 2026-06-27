@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: placement-tracker
+
+  profiles:
+    active: dev
