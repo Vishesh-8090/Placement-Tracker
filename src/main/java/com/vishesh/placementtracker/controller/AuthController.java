@@ -1,7 +1,9 @@
 package com.vishesh.placementtracker.controller;
 
+import com.vishesh.placementtracker.dto.request.LoginRequest;
 import com.vishesh.placementtracker.dto.request.RegisterRequest;
 import com.vishesh.placementtracker.dto.response.ApiResponse;
+import com.vishesh.placementtracker.dto.response.LoginResponse;
 import com.vishesh.placementtracker.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,12 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(authService.register(request));
+    }
+
+    @PostMapping("login")
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody LoginRequest request){
+        return ResponseEntity.ok(authService.login(request));
     }
 
 }
