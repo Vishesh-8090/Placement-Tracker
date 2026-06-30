@@ -8,6 +8,7 @@ import com.vishesh.placementtracker.entity.User;
 import com.vishesh.placementtracker.exception.EmailAlreadyExistsException;
 import com.vishesh.placementtracker.mapper.UserMapper;
 import com.vishesh.placementtracker.repository.UserRepository;
+import com.vishesh.placementtracker.security.jwt.JwtService;
 import com.vishesh.placementtracker.security.model.UserPrincipal;
 import com.vishesh.placementtracker.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     @Override
     @Transactional
@@ -59,11 +61,15 @@ public class AuthServiceImpl implements AuthService {
 
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
 
+        String token = jwtService.generateToken(principal);
+
         return LoginResponse.builder()
                 .id(principal.getId())
                 .username(principal.getUsername())
                 .email(principal.getEmail())
                 .role(principal.getRole())
+                .token(token)
+                .type("Bearer")
                 .build();
     }
 }
