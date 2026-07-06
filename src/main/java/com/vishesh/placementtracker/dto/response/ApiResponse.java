@@ -12,7 +12,9 @@ import java.util.Map;
 public class ApiResponse {
 
     private boolean success;
+
     private String message;
+
     private LocalDateTime timestamp;
 
     private Map<String, String> errors;
