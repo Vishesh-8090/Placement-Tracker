@@ -9,6 +9,8 @@ import org.springframework.web.service.annotation.GetExchange;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "companies")
@@ -61,4 +63,7 @@ public class Company {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "company")
+    private List<UserCompany> applications = new ArrayList<>();
 }
