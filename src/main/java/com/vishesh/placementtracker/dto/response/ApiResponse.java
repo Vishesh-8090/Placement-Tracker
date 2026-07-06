@@ -2,20 +2,19 @@ package com.vishesh.placementtracker.dto.response;
 
 import lombok.*;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ApiResponse {
+public class ApiResponse<T> {
 
     private boolean success;
 
     private String message;
 
-    private LocalDateTime timestamp;
+    private T data;
 
-    private Map<String, String> errors;
+    private LocalDateTime timestamp;
 }

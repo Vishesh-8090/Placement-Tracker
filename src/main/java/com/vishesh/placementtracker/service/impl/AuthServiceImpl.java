@@ -2,8 +2,8 @@ package com.vishesh.placementtracker.service.impl;
 
 import com.vishesh.placementtracker.dto.request.LoginRequest;
 import com.vishesh.placementtracker.dto.request.RegisterRequest;
-import com.vishesh.placementtracker.dto.response.ApiResponse;
 import com.vishesh.placementtracker.dto.response.LoginResponse;
+import com.vishesh.placementtracker.dto.response.RegisterResponse;
 import com.vishesh.placementtracker.entity.User;
 import com.vishesh.placementtracker.exception.EmailAlreadyExistsException;
 import com.vishesh.placementtracker.mapper.UserMapper;
@@ -32,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public ApiResponse register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
         if(userRepository.existsByEmail(request.getEmail())){
             throw new EmailAlreadyExistsException("Email already exists");
         }
@@ -41,11 +41,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         User savedUser = userRepository.save(user);
 
-        return ApiResponse.builder()
-                .success(true)
-                .message("User registered successfully.")
-                .timestamp(LocalDateTime.now())
-                .build();
+        return userMapper.toRegisterResponse(savedUser);
     }
 
     @Override
