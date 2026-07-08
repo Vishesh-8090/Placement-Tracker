@@ -59,6 +59,27 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUserNotFoundException(UserNotFoundException ex){
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponseBuilder.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(DuplicateApplicationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDuplicateApplicationException(DuplicateApplicationException ex){
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ApiResponseBuilder.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(ApplicationNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleApplicationNotFoundException(ApplicationNotFoundException ex){
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponseBuilder.error(ex.getMessage()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex){
 

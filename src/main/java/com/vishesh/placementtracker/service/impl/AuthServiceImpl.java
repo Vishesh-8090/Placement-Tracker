@@ -6,6 +6,7 @@ import com.vishesh.placementtracker.dto.response.LoginResponse;
 import com.vishesh.placementtracker.dto.response.RegisterResponse;
 import com.vishesh.placementtracker.entity.User;
 import com.vishesh.placementtracker.exception.EmailAlreadyExistsException;
+import com.vishesh.placementtracker.exception.UserNotFoundException;
 import com.vishesh.placementtracker.mapper.UserMapper;
 import com.vishesh.placementtracker.repository.UserRepository;
 import com.vishesh.placementtracker.security.jwt.JwtService;
@@ -15,10 +16,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -67,5 +70,17 @@ public class AuthServiceImpl implements AuthService {
                 .token(token)
                 .type("Bearer")
                 .build();
+    }
+
+    @Override
+    public User getAuthenticatedUser(){
+        Authentication authentication = SecurityContextHolder
+                .getContext().getAuthentication();
+
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+
+        return userRepository.findByEmail(userPrincipal.getEmail())
+                .orElseThrow(() ->
+                        new UserNotFoundException("Authenticated user not found"));
     }
 }
