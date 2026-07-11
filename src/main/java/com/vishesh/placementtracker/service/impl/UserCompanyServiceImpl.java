@@ -1,6 +1,5 @@
 package com.vishesh.placementtracker.service.impl;
 
-import com.sun.jdi.request.DuplicateRequestException;
 import com.vishesh.placementtracker.dto.request.UserCompanyRequest;
 import com.vishesh.placementtracker.dto.response.UserCompanyResponse;
 import com.vishesh.placementtracker.entity.Company;
@@ -12,11 +11,9 @@ import com.vishesh.placementtracker.exception.DuplicateApplicationException;
 import com.vishesh.placementtracker.mapper.UserCompanyMapper;
 import com.vishesh.placementtracker.repository.CompanyRepository;
 import com.vishesh.placementtracker.repository.UserCompanyRepository;
-import com.vishesh.placementtracker.repository.UserRepository;
 import com.vishesh.placementtracker.service.AuthService;
 import com.vishesh.placementtracker.service.UserCompanyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -108,6 +105,5 @@ public class UserCompanyServiceImpl implements UserCompanyService {
                         new ApplicationNotFoundException("Application not found"));
 
         userCompanyRepository.delete(application);
-
     }
 }

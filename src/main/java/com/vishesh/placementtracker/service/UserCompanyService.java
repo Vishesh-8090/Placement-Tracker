@@ -2,8 +2,6 @@ package com.vishesh.placementtracker.service;
 
 import com.vishesh.placementtracker.dto.request.UserCompanyRequest;
 import com.vishesh.placementtracker.dto.response.UserCompanyResponse;
-
-import java.util.LinkedList;
 import java.util.List;
 
 public interface UserCompanyService {
