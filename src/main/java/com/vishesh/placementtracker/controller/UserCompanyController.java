@@ -6,9 +6,11 @@ import com.vishesh.placementtracker.dto.response.UserCompanyResponse;
 import com.vishesh.placementtracker.enums.ApplicationStatus;
 import com.vishesh.placementtracker.service.UserCompanyService;
 import com.vishesh.placementtracker.util.ApiResponseBuilder;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -25,6 +27,10 @@ public class UserCompanyController {
 
     private final UserCompanyService userCompanyService;
 
+    @Operation(
+            summary = "Apply to a company",
+            description = "Creates a new application for the authenticated user."
+    )
     @PostMapping
     public ResponseEntity<ApiResponse<UserCompanyResponse>> apply(
             @Valid @RequestBody UserCompanyRequest request){
@@ -38,16 +44,25 @@ public class UserCompanyController {
                 ));
     }
 
+    @Operation(
+            summary = "Get all applications",
+            description = "Returns paginated applications for the authenticated user."
+    )
     @GetMapping
     public ResponseEntity<ApiResponse<Page<UserCompanyResponse>>> getMyApplications(
-            @PageableDefault(
-                    size = 6,
-                    sort = "appliedAt",
-                    direction = Sort.Direction.DESC
-            ) Pageable pageable,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+            @RequestParam(defaultValue = "appliedAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction,
             @RequestParam(required = false) ApplicationStatus status,
             @RequestParam(required = false) String company
             ){
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(direction, sortBy)
+        );
 
         Page<UserCompanyResponse> applications = userCompanyService.getMyApplications(
                 pageable,
