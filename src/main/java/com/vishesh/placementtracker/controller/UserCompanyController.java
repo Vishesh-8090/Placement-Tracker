@@ -3,10 +3,15 @@ package com.vishesh.placementtracker.controller;
 import com.vishesh.placementtracker.dto.request.UserCompanyRequest;
 import com.vishesh.placementtracker.dto.response.ApiResponse;
 import com.vishesh.placementtracker.dto.response.UserCompanyResponse;
+import com.vishesh.placementtracker.enums.ApplicationStatus;
 import com.vishesh.placementtracker.service.UserCompanyService;
 import com.vishesh.placementtracker.util.ApiResponseBuilder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,13 +39,26 @@ public class UserCompanyController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<UserCompanyResponse>>>getMyApplications(){
-        List<UserCompanyResponse> response = userCompanyService.getMyApplications();
+    public ResponseEntity<ApiResponse<Page<UserCompanyResponse>>> getMyApplications(
+            @PageableDefault(
+                    size = 6,
+                    sort = "appliedAt",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable,
+            @RequestParam(required = false) ApplicationStatus status,
+            @RequestParam(required = false) String company
+            ){
+
+        Page<UserCompanyResponse> applications = userCompanyService.getMyApplications(
+                pageable,
+                status,
+                company
+        );
 
         return ResponseEntity.ok(
                 ApiResponseBuilder.success(
                         "Applications retrieved successfully",
-                        response
+                        applications
                 )
         );
     }

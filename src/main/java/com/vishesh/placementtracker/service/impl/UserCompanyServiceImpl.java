@@ -5,6 +5,7 @@ import com.vishesh.placementtracker.dto.response.UserCompanyResponse;
 import com.vishesh.placementtracker.entity.Company;
 import com.vishesh.placementtracker.entity.User;
 import com.vishesh.placementtracker.entity.UserCompany;
+import com.vishesh.placementtracker.enums.ApplicationStatus;
 import com.vishesh.placementtracker.exception.ApplicationNotFoundException;
 import com.vishesh.placementtracker.exception.CompanyNotFoundException;
 import com.vishesh.placementtracker.exception.DuplicateApplicationException;
@@ -14,6 +15,8 @@ import com.vishesh.placementtracker.repository.UserCompanyRepository;
 import com.vishesh.placementtracker.service.AuthService;
 import com.vishesh.placementtracker.service.UserCompanyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,14 +55,39 @@ public class UserCompanyServiceImpl implements UserCompanyService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserCompanyResponse> getMyApplications(){
+    public Page<UserCompanyResponse> getMyApplications(
+            Pageable pageable,
+            ApplicationStatus status,
+            String company
+    ){
         User currentUser = authService.getAuthenticatedUser();
 
-        List<UserCompany> applications = userCompanyRepository.findAllByUser(currentUser);
+        Page<UserCompany> applications;
+        boolean hasCompanyFilter = company != null && !company.isBlank();
 
-        return applications.stream()
-                .map(userCompanyMapper::toResponse)
-                .toList();
+        if (status == null && !hasCompanyFilter){
+            applications = userCompanyRepository.findByUser(currentUser, pageable);
+        } else if (status != null && !hasCompanyFilter) {
+            applications = userCompanyRepository.findByUserAndStatus(
+                    currentUser,
+                    status,
+                    pageable
+            );
+        } else if (status == null) {
+            applications = userCompanyRepository.findByUserAndCompany_NameContainingIgnoreCase(
+                    currentUser,
+                    company,
+                    pageable
+            );
+        } else {
+            applications = userCompanyRepository.findByUserAndStatusAndCompany_NameContainingIgnoreCase(
+                    currentUser,
+                    status,
+                    company,
+                    pageable
+            );
+        }
+        return applications.map(userCompanyMapper::toResponse);
     }
 
     @Override
