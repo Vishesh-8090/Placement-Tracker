@@ -1,4 +1,17 @@
+<p align="center">
+  <img src="images/banner.png" alt="Placement Tracker Banner" width="100%">
+</p>
+
 # 🚀 Placement Tracker Backend
+
+![Java](https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=springboot)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql)
+![Spring Security](https://img.shields.io/badge/Spring_Security-6-6DB33F?style=for-the-badge&logo=springsecurity)
+![JWT](https://img.shields.io/badge/JWT-Authentication-black?style=for-the-badge&logo=jsonwebtokens)
+![Hibernate](https://img.shields.io/badge/Hibernate-ORM-59666C?style=for-the-badge&logo=hibernate)
+![Maven](https://img.shields.io/badge/Maven-Build-C71A36?style=for-the-badge&logo=apachemaven)
+![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?style=for-the-badge&logo=swagger)
 
 A production-inspired backend application built with **Java 17** and **Spring Boot** to help students manage their placement journey. The application allows users to track job applications, manage companies, visualize application statistics through a dashboard, and securely access APIs using JWT Authentication.
 
@@ -126,6 +139,54 @@ src
     ├── exception
     ├── config
     └── util
+```
+
+## 🗄 Database ER Diagram
+
+```mermaid
+erDiagram
+
+USER ||--o{ USER_COMPANY : applies
+COMPANY ||--o{ USER_COMPANY : contains
+
+USER {
+    Long id
+    String name
+    String email
+    String password
+    Role role
+}
+
+COMPANY {
+    Long id
+    String name
+    String role
+    String location
+    BigDecimal ctc
+}
+
+USER_COMPANY {
+    Long id
+    ApplicationStatus status
+    LocalDateTime appliedAt
+}
+```
+
+## 🔐 Authentication Flow
+
+```mermaid
+sequenceDiagram
+
+User->>AuthController: Login Request
+AuthController->>AuthenticationManager: Authenticate
+AuthenticationManager->>UserDetailsService: Load User
+UserDetailsService->>Database: Fetch User
+Database-->>UserDetailsService: User Details
+UserDetailsService-->>AuthenticationManager: UserPrincipal
+AuthenticationManager-->>AuthController: Authentication Success
+AuthController->>JWT Service: Generate Token
+JWT Service-->>AuthController: JWT Token
+AuthController-->>User: Login Response + JWT
 ```
 
 ---
